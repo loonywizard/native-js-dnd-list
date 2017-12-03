@@ -37,6 +37,7 @@ body {
 
 .divider {
   height: 10px;
+  transition: height 0.5s ease;
 }
 
 .expanded-divider {
@@ -45,4 +46,11 @@ body {
 .draggable {
   position: absolute;
   background: #84ff83;
+}
+
+.not-animated {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
 }

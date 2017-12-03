@@ -44,22 +44,22 @@ document.addEventListener('mousemove', (event) => {
 
     if (prevItem) {
       const prevItemCoordinates = getDOMNodePosition(prevItem);
-      if (itemCoordinates.top < prevItemCoordinates.top + prevItem.offsetHeight / 2) {
+      if (itemCoordinates.top + item.offsetHeight / 2 < prevItemCoordinates.top + prevItem.offsetHeight / 2) {
         item.previousElementSibling.style.height = '10px';
         swapTwoDOMNodes(item, item.previousElementSibling);
         swapTwoDOMNodes(item, item.previousElementSibling);
-        item.previousElementSibling.style.height = item.offsetHeight + 10 + 'px';
+        item.previousElementSibling.style.height = item.offsetHeight + 20 + 'px';
         return;
       }
     }
 
     if (nextItem) {
       const nextItemCoodridates = getDOMNodePosition(nextItem);
-      if (itemCoordinates.top + item.offsetHeight > nextItemCoodridates.top + nextItem.offsetHeight / 2) {
+      if (itemCoordinates.top + item.offsetHeight / 2 > nextItemCoodridates.top + nextItem.offsetHeight / 2) {
         item.previousElementSibling.style.height = '10px';
         swapTwoDOMNodes(item.nextElementSibling, item);
         swapTwoDOMNodes(item.nextElementSibling, item);
-        item.previousElementSibling.style.height = item.offsetHeight + 10 + 'px';
+        item.previousElementSibling.style.height = item.offsetHeight + 20 + 'px';
         return;
       }
     }
@@ -70,7 +70,29 @@ function startDraggingHandler(event) {
   const item = items.find(item => item.getAttribute('key') === draggableItemId);
   item.classList.add('draggable');
   const dividerAbove = item.previousElementSibling;
+
+
+  let style = window.getComputedStyle(dividerAbove);
+  console.log(style.getPropertyValue('transition'));
+  console.log(style.getPropertyValue('transition-delay'));
+  console.log(style.getPropertyValue('transition-duration'));
+  console.log(style.getPropertyValue('transition-property'));
+  console.log(style.getPropertyValue('transition-timing-function'));
+
+
+  dividerAbove.classList.add('not-animated');
   dividerAbove.style.height = 20 + item.offsetHeight + 'px';
+
+
+  style = window.getComputedStyle(dividerAbove);
+  console.log(style.getPropertyValue('transition'));
+  console.log(style.getPropertyValue('transition-delay'));
+  console.log(style.getPropertyValue('transition-duration'));
+  console.log(style.getPropertyValue('transition-property'));
+  console.log(style.getPropertyValue('transition-timing-function'));
+
+
+  dividerAbove.classList.remove('not-animated');
   divider = item.nextElementSibling;
   removeDOMNode(divider);
 }
@@ -79,7 +101,33 @@ function stopDraggingHandler() {
   const item = items.find(item => item.getAttribute('key') === draggableItemId);
   item.classList.remove('draggable');
   const dividerAbove = item.previousElementSibling;
+
+
+  let style = window.getComputedStyle(dividerAbove);
+  console.log(style.getPropertyValue('transition'));
+  console.log(style.getPropertyValue('transition-delay'));
+  console.log(style.getPropertyValue('transition-duration'));
+  console.log(style.getPropertyValue('transition-property'));
+  console.log(style.getPropertyValue('transition-timing-function'));
+
+  dividerAbove.classList.add('not-animated');
+
+
+
   dividerAbove.style.height = 10 + 'px';
+
+  style = window.getComputedStyle(dividerAbove);
+  console.log(style.getPropertyValue('transition'));
+  console.log(style.getPropertyValue('transition-delay'));
+  console.log(style.getPropertyValue('transition-duration'));
+  console.log(style.getPropertyValue('transition-property'));
+  console.log(style.getPropertyValue('transition-timing-function'));
+
+
+  dividerAbove.classList.remove('not-animated');
+
+
+
   insertAfter(divider, item);
 }
 
