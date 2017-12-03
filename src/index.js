@@ -38,7 +38,9 @@ items.forEach(item => {
 });
 
 document.addEventListener('mouseup', () => {
-  stopDraggingHandler();
+  if (draggingItem && isDragging) {
+    stopDraggingHandler();
+  }
   isMouseDown = false;
   isDragging = false;
   draggingItem = null;
