@@ -23,6 +23,7 @@ let draggingItem = null;
 let draggingHasStarted = false;
 let mouseOffsetX = null;
 let mouseOffsetY = null;
+let hasLastAnimationCompleted = true;
 
 /*
 * When starting dragging item, we remove it's bottom divider,
@@ -32,8 +33,10 @@ let savedDivider = null;
 
 items.forEach(item => {
   item.addEventListener('mousedown', () => {
-    draggingItem = item;
-    isMouseDown = true;
+    if (hasLastAnimationCompleted) {
+      draggingItem = item;
+      isMouseDown = true;
+    }
   });
 });
 
@@ -43,7 +46,6 @@ document.addEventListener('mouseup', () => {
   }
   isMouseDown = false;
   isDragging = false;
-  draggingItem = null;
   draggingHasStarted = false;
   mouseOffsetX = null;
   mouseOffsetY = null;
@@ -56,7 +58,7 @@ document.addEventListener('mousemove', (event) => {
   }
 });
 
-function handleDragging(event) {
+function handleDragging(event) {  
   if (!draggingHasStarted) {
     startDraggingHandler(event);
     draggingHasStarted = true;
@@ -185,17 +187,18 @@ function startDraggingHandler(event) {
 * */
 function stopDraggingHandler() {
   const dividerAbove = draggingItem.previousElementSibling;
-  const savedDraggingItem = draggingItem;
   const dividerAbovePosition = getDOMNodePosition(dividerAbove);
 
   draggingItem.classList.add('animated-draggable-item');
 
-  savedDraggingItem.style.top = `${dividerAbovePosition.top + DIVIDER_HEIGHT}px`;
-  savedDraggingItem.style.left = `${dividerAbovePosition.left}px`;
+  draggingItem.style.top = `${dividerAbovePosition.top + DIVIDER_HEIGHT}px`;
+  draggingItem.style.left = `${dividerAbovePosition.left}px`;
+
+  hasLastAnimationCompleted = false;
 
   setTimeout(() => {
-    savedDraggingItem.classList.remove('draggable');
-    savedDraggingItem.classList.remove('animated-draggable-item');
+    draggingItem.classList.remove('draggable');
+    draggingItem.classList.remove('animated-draggable-item');
 
     dividerAbove.classList.add('not-animated');
     dividerAbove.style.height = `${DIVIDER_HEIGHT}px`;
@@ -205,6 +208,9 @@ function stopDraggingHandler() {
 
     dividerAbove.classList.remove('not-animated');
 
-    insertAfter(savedDivider, savedDraggingItem);
+    insertAfter(savedDivider, draggingItem);
+
+    hasLastAnimationCompleted = true;
+    draggingItem = null;
   }, DURATION_OF_DRAGGING_ITEM_ANIMATION);
 }
