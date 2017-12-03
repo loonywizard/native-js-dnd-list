@@ -5,135 +5,177 @@ import {
   swapTwoDOMNodes,
 } from './utils';
 
+const DIVIDER_HEIGHT = 10;
+
 const listNode = document.getElementById('list');
 
 const items = Array.from(listNode.getElementsByClassName('item'));
 
 let isMouseDown = false;
 let isDragging = false;
-let draggableItemId = null;
+let draggingItem = null;
 let draggingHasStarted = false;
-let divider = null;
+
+/*
+* When starting dragging item, we remove it's bottom divider,
+* And when we stop dragging, we put that divider after item
+* */
+let savedDivider = null;
 
 items.forEach(item => {
   item.addEventListener('mousedown', () => {
-    draggableItemId = item.getAttribute('key');
+    draggingItem = item;
     isMouseDown = true;
   });
-  item.addEventListener('dragstart', () => false);
 });
 
 document.addEventListener('mouseup', () => {
+  stopDraggingHandler();
   isMouseDown = false;
   isDragging = false;
-  stopDraggingHandler();
-  draggableItemId = null;
+  draggingItem = null;
   draggingHasStarted = false;
 });
 
 document.addEventListener('mousemove', (event) => {
   isDragging = isMouseDown;
   if (isDragging) {
-    if (!draggingHasStarted) {
-      startDraggingHandler();
-      draggingHasStarted = true;
-    }
-    
-    const item = items.find(item => item.getAttribute('key') === draggableItemId);
-    
-    item.style.top = event.pageY - item.offsetHeight / 2 + 'px';
-    item.style.left = event.pageX - item.offsetWidth / 2 + 'px';
-    
-    const itemCoordinates = getDOMNodePosition(item);
-
-    const prevItem = item.previousElementSibling.previousElementSibling;
-    const nextItem = item.nextElementSibling;
-
-    if (prevItem) {
-      const prevItemCoordinates = getDOMNodePosition(prevItem);
-      if (itemCoordinates.top + item.offsetHeight / 2 < prevItemCoordinates.top + prevItem.offsetHeight / 2) {
-        item.previousElementSibling.style.height = '10px';
-        swapTwoDOMNodes(item, item.previousElementSibling);
-        swapTwoDOMNodes(item, item.previousElementSibling);
-        item.previousElementSibling.style.height = item.offsetHeight + 20 + 'px';
-        return;
-      }
-    }
-
-    if (nextItem) {
-      const nextItemCoodridates = getDOMNodePosition(nextItem);
-      if (itemCoordinates.top + item.offsetHeight / 2 > nextItemCoodridates.top + nextItem.offsetHeight / 2) {
-        item.previousElementSibling.style.height = '10px';
-        swapTwoDOMNodes(item.nextElementSibling, item);
-        swapTwoDOMNodes(item.nextElementSibling, item);
-        item.previousElementSibling.style.height = item.offsetHeight + 20 + 'px';
-        return;
-      }
-    }
+    handleDragging(event);
   }
 });
 
-function startDraggingHandler(event) {
-  const item = items.find(item => item.getAttribute('key') === draggableItemId);
-  item.classList.add('draggable');
-  const dividerAbove = item.previousElementSibling;
+function handleDragging(event) {
+  if (!draggingHasStarted) {
+    startDraggingHandler();
+    draggingHasStarted = true;
+  }
 
+  // Update dragging item position
+  draggingItem.style.top = event.pageY - draggingItem.offsetHeight / 2 + 'px';
+  draggingItem.style.left = event.pageX - draggingItem.offsetWidth / 2 + 'px';
 
-  let style = window.getComputedStyle(dividerAbove);
-  console.log(style.getPropertyValue('transition'));
-  console.log(style.getPropertyValue('transition-delay'));
-  console.log(style.getPropertyValue('transition-duration'));
-  console.log(style.getPropertyValue('transition-property'));
-  console.log(style.getPropertyValue('transition-timing-function'));
+  const draggingItemCoordinates = getDOMNodePosition(draggingItem);
 
+  /*
+  * <div class="divider"></div>             | Divider above previous item
+  * <div class="item"> ... </div>           | Previous item before dragging item
+  * <div class="divider"></div>             | Divider between previous and dragging items
+  * <div class="item draggable"> ... </div> | ** Dragging item **
+  * <div class="item"> ... </div>           | Next item after dragging item
+  * <div class="divider"></div>             | Divider under next item
+  * */
+  const prevItem = draggingItem.previousElementSibling.previousElementSibling;
+  const nextItem = draggingItem.nextElementSibling;
 
-  dividerAbove.classList.add('not-animated');
-  dividerAbove.style.height = 20 + item.offsetHeight + 'px';
+  /*
+  * We should swap dragging item with previous item when:
+  *
+  * 1. Previous item exists
+  * 2. Y center coordinate of dragging item is less than Y center coordinate of previous item
+  * */
+  if (prevItem) {
+    const prevItemCoordinates = getDOMNodePosition(prevItem);
+    const shouldSwapItems = (
+      draggingItemCoordinates.top + draggingItem.offsetHeight / 2 <
+      prevItemCoordinates.top + prevItem.offsetHeight / 2
+    );
 
+    if (shouldSwapItems) {
+      const dividerAboveDraggingItem = draggingItem.previousElementSibling;
+      const dividerAbovePrevItem = prevItem.previousElementSibling;
 
-  style = window.getComputedStyle(dividerAbove);
-  console.log(style.getPropertyValue('transition'));
-  console.log(style.getPropertyValue('transition-delay'));
-  console.log(style.getPropertyValue('transition-duration'));
-  console.log(style.getPropertyValue('transition-property'));
-  console.log(style.getPropertyValue('transition-timing-function'));
+      dividerAboveDraggingItem.style.height = `${DIVIDER_HEIGHT}px`;
 
+      swapTwoDOMNodes(draggingItem, dividerAboveDraggingItem);
+      swapTwoDOMNodes(draggingItem, prevItem);
 
-  dividerAbove.classList.remove('not-animated');
-  divider = item.nextElementSibling;
-  removeDOMNode(divider);
+      dividerAbovePrevItem.style.height = `${draggingItem.offsetHeight + 2 * DIVIDER_HEIGHT}px`;
+
+      return;
+    }
+  }
+
+  /*
+  * We should swap dragging item with next item when:
+  *
+  * 1. Previous item exists
+  * 2. Y center coordinate of dragging item is more than Y center coordinate of next item
+  * */
+  if (nextItem) {
+    const nextItemCoodridanes = getDOMNodePosition(nextItem);
+    const shouldSwapItems = (
+      draggingItemCoordinates.top + draggingItem.offsetHeight / 2 >
+      nextItemCoodridanes.top + nextItem.offsetHeight / 2
+    );
+
+    if (shouldSwapItems) {
+      const dividerAboveDraggingItem = draggingItem.previousElementSibling;
+      const dividerUnderNextItem = nextItem.nextElementSibling;
+
+      dividerAboveDraggingItem.style.height = `${DIVIDER_HEIGHT}px`;
+
+      swapTwoDOMNodes(draggingItem, nextItem);
+      swapTwoDOMNodes(draggingItem, dividerUnderNextItem);
+
+      dividerUnderNextItem.style.height = `${draggingItem.offsetHeight + 2 * DIVIDER_HEIGHT}px`;
+    }
+  }
 }
 
-function stopDraggingHandler() {
-  const item = items.find(item => item.getAttribute('key') === draggableItemId);
-  item.classList.remove('draggable');
-  const dividerAbove = item.previousElementSibling;
+/*
+* This function handles starting of dragging item
+* What we need to do, when dragging has started?
+*
+* 1. Add 'draggable' class to dragging item class list
+* 2. Add 'not-animated' class to divider above the dragging item,
+*    Expand divider to the size of dragging item plus two divider's heights
+*    Remove 'not-animated' class from divider
+* 3. Save divider under dragging item and remove it from DOM
+* */
+function startDraggingHandler() {
+  const dividerAbove = draggingItem.previousElementSibling;
 
-
-  let style = window.getComputedStyle(dividerAbove);
-  console.log(style.getPropertyValue('transition'));
-  console.log(style.getPropertyValue('transition-delay'));
-  console.log(style.getPropertyValue('transition-duration'));
-  console.log(style.getPropertyValue('transition-property'));
-  console.log(style.getPropertyValue('transition-timing-function'));
+  draggingItem.classList.add('draggable');
 
   dividerAbove.classList.add('not-animated');
+  dividerAbove.style.height = `${2 * DIVIDER_HEIGHT + draggingItem.offsetHeight}px`;
 
-
-
-  dividerAbove.style.height = 10 + 'px';
-
-  style = window.getComputedStyle(dividerAbove);
-  console.log(style.getPropertyValue('transition'));
-  console.log(style.getPropertyValue('transition-delay'));
-  console.log(style.getPropertyValue('transition-duration'));
-  console.log(style.getPropertyValue('transition-property'));
-  console.log(style.getPropertyValue('transition-timing-function'));
-
+  /*
+  * It may sound silly, but this code is not working without this line, really
+  * The thing is, when we do not have this line, `transition: none` css just doesn't apply
+  * to the dividerAbove DOM node
+  * WHY??
+  * */
+  window.getComputedStyle(dividerAbove).getPropertyValue('transition');
 
   dividerAbove.classList.remove('not-animated');
 
+  savedDivider = draggingItem.nextElementSibling;
+  removeDOMNode(savedDivider);
+}
 
+/*
+* This function handles ending for dragging
+* What we need to do, when dragging has ended?
+*
+* 1. Remove 'draggable' class from dragging item class list
+* 2. Add 'not-animated' class to divider above the dragging item,
+*    Collapse divider to the size of usual divider height
+*    Remove 'not-animated' class from divider
+* 3. Restore saved divider and insert it after dragging item
+* */
+function stopDraggingHandler() {
+  const dividerAbove = draggingItem.previousElementSibling;
 
-  insertAfter(divider, item);
+  draggingItem.classList.remove('draggable');
+
+  dividerAbove.classList.add('not-animated');
+  dividerAbove.style.height = `${DIVIDER_HEIGHT}px`;
+
+  // see startDraggingHandler function
+  window.getComputedStyle(dividerAbove).getPropertyValue('transition');
+
+  dividerAbove.classList.remove('not-animated');
+
+  insertAfter(savedDivider, draggingItem);
 }
