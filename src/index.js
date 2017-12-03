@@ -7,6 +7,12 @@ import {
 
 const DIVIDER_HEIGHT = 10;
 
+/*
+* Duration of animation, in which dragging item is returning to it's place
+* after dragging has stopped
+* */
+const DURATION_OF_DRAGGING_ITEM_ANIMATION = 200;
+
 const listNode = document.getElementById('list');
 
 const items = Array.from(listNode.getElementsByClassName('item'));
@@ -166,24 +172,37 @@ function startDraggingHandler(event) {
 * This function handles ending for dragging
 * What we need to do, when dragging has ended?
 *
-* 1. Remove 'draggable' class from dragging item class list
-* 2. Add 'not-animated' class to divider above the dragging item,
+* 1. Add 'animated-draggable-item' class to dragging item
+* 2. Set top and left position to dragging item
+* 3. Wait, while animation will complete
+* 4. Remove 'draggable' class from dragging item class list
+* 5. Add 'not-animated' class to divider above the dragging item,
 *    Collapse divider to the size of usual divider height
 *    Remove 'not-animated' class from divider
-* 3. Restore saved divider and insert it after dragging item
+* 6. Restore saved divider and insert it after dragging item
 * */
 function stopDraggingHandler() {
   const dividerAbove = draggingItem.previousElementSibling;
+  const savedDraggingItem = draggingItem;
+  const dividerAbovePosition = getDOMNodePosition(dividerAbove);
 
-  draggingItem.classList.remove('draggable');
+  draggingItem.classList.add('animated-draggable-item');
 
-  dividerAbove.classList.add('not-animated');
-  dividerAbove.style.height = `${DIVIDER_HEIGHT}px`;
+  savedDraggingItem.style.top = `${dividerAbovePosition.top + DIVIDER_HEIGHT}px`;
+  savedDraggingItem.style.left = `${dividerAbovePosition.left}px`;
 
-  // see startDraggingHandler function
-  window.getComputedStyle(dividerAbove).getPropertyValue('transition');
+  setTimeout(() => {
+    savedDraggingItem.classList.remove('draggable');
+    savedDraggingItem.classList.remove('animated-draggable-item');
 
-  dividerAbove.classList.remove('not-animated');
+    dividerAbove.classList.add('not-animated');
+    dividerAbove.style.height = `${DIVIDER_HEIGHT}px`;
 
-  insertAfter(savedDivider, draggingItem);
+    // see startDraggingHandler function
+    window.getComputedStyle(dividerAbove).getPropertyValue('transition');
+
+    dividerAbove.classList.remove('not-animated');
+
+    insertAfter(savedDivider, savedDraggingItem);
+  }, DURATION_OF_DRAGGING_ITEM_ANIMATION);
 }

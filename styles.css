@@ -48,6 +48,11 @@ body {
   background: #84ff83;
 }
 
+.animated-draggable-item {
+  transition: all 0.2s ease;
+  transition-property: left, top;
+}
+
 .not-animated {
   -webkit-transition: none !important;
   -moz-transition: none !important;
