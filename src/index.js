@@ -1,3 +1,10 @@
+import {
+  insertAfter,
+  removeDOMNode,
+  getDOMNodePosition,
+  swapTwoDOMNodes,
+} from './utils';
+
 const listNode = document.getElementById('list');
 
 const items = Array.from(listNode.getElementsByClassName('item'));
@@ -129,30 +136,4 @@ function stopDraggingHandler() {
 
 
   insertAfter(divider, item);
-}
-
-function removeDOMNode(element) {
-  element.parentNode.removeChild(element);
-}
-
-function insertAfter(elem, refElem) {
-  const parent = refElem.parentNode;
-  const next = refElem.nextSibling;
-  if (next) {
-    return parent.insertBefore(elem, next);
-  } else {
-    return parent.appendChild(elem);
-  }
-}
-
-function getDOMNodePosition(elem) {
-  const box = elem.getBoundingClientRect();
-  return {
-    top: box.top,
-    left: box.left
-  };
-}
-
-function swapTwoDOMNodes(node1, node2) {
-  node1.parentNode.insertBefore(node1, node2);
 }
