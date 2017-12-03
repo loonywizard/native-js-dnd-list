@@ -2,5 +2,47 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background-color: #f3f3f3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  min-height: 100vh;
+  background-color: #5d67f3;
+  padding-top: 100px;
+  padding-bottom: 30px;
+}
+
+.list {
+  margin-left: auto;
+  margin-right: auto;
+  width: 300px;
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+}
+
+.item {
+  width: 280px;
+  background: #ffffff;
+  border: 1px solid #5d67f3;
+  border-radius: 3px;
+  padding: 5px 10px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.divider {
+  height: 10px;
+}
+
+.expanded-divider {
+}
+
+.draggable {
+  position: absolute;
+  background: #84ff83;
 }
