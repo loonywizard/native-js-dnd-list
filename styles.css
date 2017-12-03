@@ -2,6 +2,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
 }
 
 * {
@@ -35,6 +36,12 @@ body {
   cursor: pointer;
 }
 
+.item-id {
+  color: #585858;
+  font-size: .9rem;
+  padding: 5px 0;
+}
+
 .divider {
   height: 10px;
   transition: height 0.5s ease;
@@ -56,4 +63,13 @@ body {
 
 .not-animated {
   transition: none;
+}
+
+a {
+  color: #06AED5;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #086788;
 }

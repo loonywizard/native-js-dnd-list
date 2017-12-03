@@ -38,6 +38,8 @@ items.forEach(item => {
       isMouseDown = true;
     }
   });
+
+  item.ondragstart = () => false;
 });
 
 document.addEventListener('mouseup', () => {
