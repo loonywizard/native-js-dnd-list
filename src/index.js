@@ -15,6 +15,8 @@ let isMouseDown = false;
 let isDragging = false;
 let draggingItem = null;
 let draggingHasStarted = false;
+let mouseOffsetX = null;
+let mouseOffsetY = null;
 
 /*
 * When starting dragging item, we remove it's bottom divider,
@@ -35,6 +37,8 @@ document.addEventListener('mouseup', () => {
   isDragging = false;
   draggingItem = null;
   draggingHasStarted = false;
+  mouseOffsetX = null;
+  mouseOffsetY = null;
 });
 
 document.addEventListener('mousemove', (event) => {
@@ -46,13 +50,13 @@ document.addEventListener('mousemove', (event) => {
 
 function handleDragging(event) {
   if (!draggingHasStarted) {
-    startDraggingHandler();
+    startDraggingHandler(event);
     draggingHasStarted = true;
   }
 
   // Update dragging item position
-  draggingItem.style.top = event.pageY - draggingItem.offsetHeight / 2 + 'px';
-  draggingItem.style.left = event.pageX - draggingItem.offsetWidth / 2 + 'px';
+  draggingItem.style.top = event.pageY - mouseOffsetY + 'px';
+  draggingItem.style.left = event.pageX - mouseOffsetX + 'px';
 
   const draggingItemCoordinates = getDOMNodePosition(draggingItem);
 
@@ -126,14 +130,18 @@ function handleDragging(event) {
 * This function handles starting of dragging item
 * What we need to do, when dragging has started?
 *
-* 1. Add 'draggable' class to dragging item class list
-* 2. Add 'not-animated' class to divider above the dragging item,
+* 1. Save offsetX and offsetY of mouse and dragging item
+* 2. Add 'draggable' class to dragging item class list
+* 3. Add 'not-animated' class to divider above the dragging item,
 *    Expand divider to the size of dragging item plus two divider's heights
 *    Remove 'not-animated' class from divider
-* 3. Save divider under dragging item and remove it from DOM
+* 4. Save divider under dragging item and remove it from DOM
 * */
-function startDraggingHandler() {
+function startDraggingHandler(event) {
   const dividerAbove = draggingItem.previousElementSibling;
+
+  mouseOffsetX = event.pageX - getDOMNodePosition(draggingItem).left;
+  mouseOffsetY = event.pageY - getDOMNodePosition(draggingItem).top;
 
   draggingItem.classList.add('draggable');
 
