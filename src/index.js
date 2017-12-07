@@ -161,10 +161,14 @@ function startDraggingHandler(event) {
   dividerAbove.style.height = `${2 * DIVIDER_HEIGHT + draggingItem.offsetHeight}px`;
 
   /*
-  * It may sound silly, but this code is not working without this line, really
-  * The thing is, when we do not have this line, `transition: none` css just doesn't apply
-  * to the dividerAbove DOM node
-  * WHY??
+  * The browser doesn't update transition property, changed by adding and then removing class,
+  * because both changes are happening in a single javascript round, so browser takes its chance
+  * to optimize the process and doesn't update transition property
+  *
+  * The solution is to try to access property value, it triggers browser to update
+  * property we're trying to access
+  *
+  * See stackoverflow answer: https://stackoverflow.com/a/24195559
   * */
   window.getComputedStyle(dividerAbove).getPropertyValue('transition');
 
@@ -205,7 +209,7 @@ function stopDraggingHandler() {
     dividerAbove.classList.add('not-animated');
     dividerAbove.style.height = `${DIVIDER_HEIGHT}px`;
 
-    // see startDraggingHandler function
+    // see startDraggingHandler function for comment
     window.getComputedStyle(dividerAbove).getPropertyValue('transition');
 
     dividerAbove.classList.remove('not-animated');
