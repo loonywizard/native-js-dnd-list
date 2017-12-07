@@ -14,7 +14,7 @@ export function removeDOMNode(node) {
  * @param refNode - DOM node, after which first node should be inserted
  * */
 export function insertAfter(node, refNode) {
-  const parentNode = refNode.parentNode;
+  const { parentNode } = refNode;
   const nextNode = refNode.nextElementSibling;
   if (nextNode) {
     parentNode.insertBefore(node, nextNode);
