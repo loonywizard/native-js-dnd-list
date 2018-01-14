@@ -9,7 +9,7 @@ export function removeDOMNode(node) {
 
 /**
  * This function inserts first given DOM node after second given DOM node
- * 
+ *
  * @param node - DOM node to insert
  * @param refNode - DOM node, after which first node should be inserted
  * */

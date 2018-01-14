@@ -31,7 +31,7 @@ let hasLastAnimationCompleted = true;
 * */
 let savedDivider = null;
 
-items.forEach(item => {
+items.forEach((item) => {
   item.addEventListener('mousedown', () => {
     if (hasLastAnimationCompleted) {
       draggingItem = item;
@@ -39,104 +39,8 @@ items.forEach(item => {
     }
   });
 
-  item.ondragstart = () => false;
+  item.ondragstart = () => false; // eslint-disable-line no-param-reassign
 });
-
-document.addEventListener('mouseup', () => {
-  if (draggingItem && isDragging) {
-    stopDraggingHandler();
-  }
-  isMouseDown = false;
-  isDragging = false;
-  draggingHasStarted = false;
-  mouseOffsetX = null;
-  mouseOffsetY = null;
-});
-
-document.addEventListener('mousemove', (event) => {
-  isDragging = isMouseDown;
-  if (isDragging) {
-    handleDragging(event);
-  }
-});
-
-function handleDragging(event) {  
-  if (!draggingHasStarted) {
-    startDraggingHandler(event);
-    draggingHasStarted = true;
-  }
-
-  // Update dragging item position
-  draggingItem.style.top = event.pageY - mouseOffsetY + 'px';
-  draggingItem.style.left = event.pageX - mouseOffsetX + 'px';
-
-  const draggingItemCoordinates = getDOMNodePosition(draggingItem);
-
-  /*
-  * <div class="divider"></div>             | Divider above previous item
-  * <div class="item"> ... </div>           | Previous item before dragging item
-  * <div class="divider"></div>             | Divider between previous and dragging items
-  * <div class="item draggable"> ... </div> | ** Dragging item **
-  * <div class="item"> ... </div>           | Next item after dragging item
-  * <div class="divider"></div>             | Divider under next item
-  * */
-  const prevItem = draggingItem.previousElementSibling.previousElementSibling;
-  const nextItem = draggingItem.nextElementSibling;
-
-  /*
-  * We should swap dragging item with previous item when:
-  *
-  * 1. Previous item exists
-  * 2. Y center coordinate of dragging item is less than Y center coordinate of previous item
-  * */
-  if (prevItem) {
-    const prevItemCoordinates = getDOMNodePosition(prevItem);
-    const shouldSwapItems = (
-      draggingItemCoordinates.top + draggingItem.offsetHeight / 2 <
-      prevItemCoordinates.top + prevItem.offsetHeight / 2
-    );
-
-    if (shouldSwapItems) {
-      const dividerAboveDraggingItem = draggingItem.previousElementSibling;
-      const dividerAbovePrevItem = prevItem.previousElementSibling;
-
-      dividerAboveDraggingItem.style.height = `${DIVIDER_HEIGHT}px`;
-
-      swapTwoDOMNodes(draggingItem, dividerAboveDraggingItem);
-      swapTwoDOMNodes(draggingItem, prevItem);
-
-      dividerAbovePrevItem.style.height = `${draggingItem.offsetHeight + 2 * DIVIDER_HEIGHT}px`;
-
-      return;
-    }
-  }
-
-  /*
-  * We should swap dragging item with next item when:
-  *
-  * 1. Previous item exists
-  * 2. Y center coordinate of dragging item is more than Y center coordinate of next item
-  * */
-  if (nextItem) {
-    const nextItemCoodridanes = getDOMNodePosition(nextItem);
-    const shouldSwapItems = (
-      draggingItemCoordinates.top + draggingItem.offsetHeight / 2 >
-      nextItemCoodridanes.top + nextItem.offsetHeight / 2
-    );
-
-    if (shouldSwapItems) {
-      const dividerAboveDraggingItem = draggingItem.previousElementSibling;
-      const dividerUnderNextItem = nextItem.nextElementSibling;
-
-      dividerAboveDraggingItem.style.height = `${DIVIDER_HEIGHT}px`;
-
-      swapTwoDOMNodes(draggingItem, nextItem);
-      swapTwoDOMNodes(draggingItem, dividerUnderNextItem);
-
-      dividerUnderNextItem.style.height = `${draggingItem.offsetHeight + 2 * DIVIDER_HEIGHT}px`;
-    }
-  }
-}
 
 /*
 * This function handles starting of dragging item
@@ -220,3 +124,99 @@ function stopDraggingHandler() {
     draggingItem = null;
   }, DURATION_OF_DRAGGING_ITEM_ANIMATION);
 }
+
+function handleDragging(event) {
+  if (!draggingHasStarted) {
+    startDraggingHandler(event);
+    draggingHasStarted = true;
+  }
+
+  // Update dragging item position
+  draggingItem.style.top = `${event.pageY - mouseOffsetY}px`;
+  draggingItem.style.left = `${event.pageX - mouseOffsetX}px`;
+
+  const draggingItemCoordinates = getDOMNodePosition(draggingItem);
+
+  /*
+  * <div class="divider"></div>             | Divider above previous item
+  * <div class="item"> ... </div>           | Previous item before dragging item
+  * <div class="divider"></div>             | Divider between previous and dragging items
+  * <div class="item draggable"> ... </div> | ** Dragging item **
+  * <div class="item"> ... </div>           | Next item after dragging item
+  * <div class="divider"></div>             | Divider under next item
+  * */
+  const prevItem = draggingItem.previousElementSibling.previousElementSibling;
+  const nextItem = draggingItem.nextElementSibling;
+
+  /*
+  * We should swap dragging item with previous item when:
+  *
+  * 1. Previous item exists
+  * 2. Y center coordinate of dragging item is less than Y center coordinate of previous item
+  * */
+  if (prevItem) {
+    const prevItemCoordinates = getDOMNodePosition(prevItem);
+    const shouldSwapItems = (
+      draggingItemCoordinates.top + draggingItem.offsetHeight / 2 <
+      prevItemCoordinates.top + prevItem.offsetHeight / 2
+    );
+
+    if (shouldSwapItems) {
+      const dividerAboveDraggingItem = draggingItem.previousElementSibling;
+      const dividerAbovePrevItem = prevItem.previousElementSibling;
+
+      dividerAboveDraggingItem.style.height = `${DIVIDER_HEIGHT}px`;
+
+      swapTwoDOMNodes(draggingItem, dividerAboveDraggingItem);
+      swapTwoDOMNodes(draggingItem, prevItem);
+
+      dividerAbovePrevItem.style.height = `${draggingItem.offsetHeight + 2 * DIVIDER_HEIGHT}px`;
+
+      return;
+    }
+  }
+
+  /*
+  * We should swap dragging item with next item when:
+  *
+  * 1. Previous item exists
+  * 2. Y center coordinate of dragging item is more than Y center coordinate of next item
+  * */
+  if (nextItem) {
+    const nextItemCoodridanes = getDOMNodePosition(nextItem);
+    const shouldSwapItems = (
+      draggingItemCoordinates.top + draggingItem.offsetHeight / 2 >
+      nextItemCoodridanes.top + nextItem.offsetHeight / 2
+    );
+
+    if (shouldSwapItems) {
+      const dividerAboveDraggingItem = draggingItem.previousElementSibling;
+      const dividerUnderNextItem = nextItem.nextElementSibling;
+
+      dividerAboveDraggingItem.style.height = `${DIVIDER_HEIGHT}px`;
+
+      swapTwoDOMNodes(draggingItem, nextItem);
+      swapTwoDOMNodes(draggingItem, dividerUnderNextItem);
+
+      dividerUnderNextItem.style.height = `${draggingItem.offsetHeight + 2 * DIVIDER_HEIGHT}px`;
+    }
+  }
+}
+
+document.addEventListener('mouseup', () => {
+  if (draggingItem && isDragging) {
+    stopDraggingHandler();
+  }
+  isMouseDown = false;
+  isDragging = false;
+  draggingHasStarted = false;
+  mouseOffsetX = null;
+  mouseOffsetY = null;
+});
+
+document.addEventListener('mousemove', (event) => {
+  isDragging = isMouseDown;
+  if (isDragging) {
+    handleDragging(event);
+  }
+});
