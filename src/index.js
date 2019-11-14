@@ -32,12 +32,14 @@ let hasLastAnimationCompleted = true;
 let savedDivider = null;
 
 items.forEach((item) => {
-  item.addEventListener('mousedown', () => {
+  let handler = () => {
     if (hasLastAnimationCompleted) {
       draggingItem = item;
       isMouseDown = true;
     }
-  });
+  };
+  item.addEventListener('mousedown', handler);
+  item.addEventListener('touchstart', handler, { passive: true });
 
   item.ondragstart = () => false; // eslint-disable-line no-param-reassign
 });
@@ -203,7 +205,7 @@ function handleDragging(event) {
   }
 }
 
-document.addEventListener('mouseup', () => {
+let endHandler = () => {
   if (draggingItem && isDragging) {
     stopDraggingHandler();
   }
@@ -212,11 +214,19 @@ document.addEventListener('mouseup', () => {
   draggingHasStarted = false;
   mouseOffsetX = null;
   mouseOffsetY = null;
-});
+};
 
-document.addEventListener('mousemove', (event) => {
+document.addEventListener('mouseup', endHandler);
+document.addEventListener('touchend', endHandler);
+
+let moveHandler = (event, positionHolder) => {
   isDragging = isMouseDown;
   if (isDragging) {
-    handleDragging(event);
+    event.preventDefault();
+    handleDragging(positionHolder || event);
   }
-});
+};
+
+document.addEventListener('mousemove', moveHandler);
+document.addEventListener('touchmove', (event) => moveHandler(event, event.touches[0]), { passive: false });
+// Explicit { passive: false } required from Chrome v56 [ https://www.chromestatus.com/features/5093566007214080 ]
