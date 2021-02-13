@@ -1,11 +1,14 @@
 {
-  "extends": "eslint-config-airbnb-base",
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "rules": {
-    "prefer-destructuring": ["off"],
-    "no-mixed-operators": ["off"],
-    "import/prefer-default-export": ["off"]
-  },
-  "env": {
-    "browser": true
+    "semi": ["error", "never"]
   }
 }
