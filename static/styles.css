@@ -58,7 +58,7 @@ body {
 }
 
 .animated-draggable-item {
-  transition: all 0.1s ease;
+  transition: all 0.2s ease;
   transition-property: left, top;
 }
 
