@@ -6,23 +6,10 @@ import { DIVIDER_HEIGHT, DURATION_OF_DRAGGING_ITEM_ANIMATION } from './consts'
 
 import { IAppState } from './types'
 
-/*
- * This function handles end for dragging
- * What we need to do, when dragging has ended?
- *
- * 1. Add 'animated-draggable-item' class to dragging item
- * 2. Set top and left position to dragging item
- * 3. Wait, while animation will complete
- * 4. Remove 'draggable' and 'animated-draggable-item' classes from dragging item class list
- * 5. Add 'not-animated' class to divider above the dragging item,
- * 6. Collapse divider to the size of usual divider height
- * 7. Remove 'not-animated' class from divider
- * 8. Restore saved divider and insert it after dragging item
- * 9. Reset variables in state to false / null
- */
+
 function createStopDraggingHandler(state: IAppState) {
   function stopDraggingHandler() {
-    if (state.draggingItem && state.isDragging) {
+    if (state.draggingItem) {
       state.draggingItem.classList.add('animated-draggable-item')
 
       const dividerAbove = <HTMLElement>state.draggingItem.previousElementSibling

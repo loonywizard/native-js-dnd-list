@@ -9,7 +9,7 @@ const DIVIDER_HEIGHT = 10
  * Duration of animation in ms, in which dragging item is returned to it's place
  * after dragging has stopped
  */
-const DURATION_OF_DRAGGING_ITEM_ANIMATION = 200
+const DURATION_OF_DRAGGING_ITEM_ANIMATION = 100
 
 const INITIAL_APP_STATE: IAppState = {
   isMouseDown: false,

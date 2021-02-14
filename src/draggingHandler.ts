@@ -5,11 +5,10 @@ import { getNextListItem } from './utils/getNextListItem'
 
 import { DIVIDER_HEIGHT } from './consts'
 
-import { IStartDraggingHandler } from './startDraggingHandler'
 import { IAppState } from './types'
 
 
-function createDraggingHandler(state: IAppState, startDraggingHandler: IStartDraggingHandler) {
+function createDraggingHandler(state: IAppState) {
   function handleDragging(event: MouseEvent | TouchEvent) {
     state.isDragging = state.isMouseDown
 
@@ -20,10 +19,6 @@ function createDraggingHandler(state: IAppState, startDraggingHandler: IStartDra
     const mouseEventOrTouch: MouseEvent | Touch = (
       event instanceof TouchEvent ? event.touches[0] : event
     )
-
-    if (!state.draggingHasStarted) {
-      startDraggingHandler(mouseEventOrTouch)
-    }
 
     if (!state.draggingItem) return
 

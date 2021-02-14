@@ -1,9 +1,6 @@
-// import '../assets/styles.css'
-
 import { createStartDraggingHandler } from './startDraggingHandler'
 import { createStopDraggingHandler } from './stopDraggingHandler'
 import { createDraggingHandler } from './draggingHandler'
-import { createMouseDownHandler } from './onMouseDown'
 
 import { INITIAL_APP_STATE } from './consts'
 
@@ -13,15 +10,14 @@ function init() {
   const state: IAppState = INITIAL_APP_STATE
   const listItems = <HTMLElement[]>Array.from(document.getElementsByClassName('item'))
 
-  const startDraggingHandler = createStartDraggingHandler(state)
   const stopDraggingHandler = createStopDraggingHandler(state)
-  const draggingHandler = createDraggingHandler(state, startDraggingHandler)
+  const draggingHandler = createDraggingHandler(state)
   
   listItems.forEach((listItem) => {
-    const onMouseDownHandler = createMouseDownHandler(state, listItem)
+    const startDraggingHandler = createStartDraggingHandler(state, listItem)
 
-    listItem.addEventListener('mousedown', onMouseDownHandler)
-    listItem.addEventListener('touchstart', onMouseDownHandler)
+    listItem.addEventListener('mousedown', startDraggingHandler)
+    listItem.addEventListener('touchstart', startDraggingHandler)
 
     listItem.ondragstart = () => false
   })

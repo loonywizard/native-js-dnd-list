@@ -6,30 +6,26 @@ import { DIVIDER_HEIGHT } from './consts'
 
 import { IAppState } from './types'
 
-type IStartDraggingHandler = (event: MouseEvent | Touch) => void
 
-/*
- * This function handles starting of dragging item
- * What we need to do, when dragging has started?
- *
- * 1. Set draggingHasStarted to true
- * 2. Save offsetX and offsetY of mouse and dragging item
- * 3. Add 'draggable' class to dragging item class list
- * 4. Add 'not-animated' class to divider above the dragging item,
- * 5. Expand divider to the size of dragging item plus two divider's heights
- * 6. Remove 'not-animated' class from divider
- * 7. Save divider under dragging item and remove it from DOM
- */
-function createStartDraggingHandler(state: IAppState) {
-  function startDraggingHandler(event: MouseEvent | Touch) {
-    if (!state.draggingItem) return
+function createStartDraggingHandler(state: IAppState, listItem: HTMLElement) {
+  function startDraggingHandler(event: MouseEvent | TouchEvent) {
+    if (!state.hasLastAnimationCompleted) return
 
+    const mouseEventOrTouch: MouseEvent | Touch = (
+      event instanceof TouchEvent ? event.touches[0] : event
+    )
+    
+    state.draggingItem = listItem
+    state.isMouseDown = true
     state.draggingHasStarted = true
 
-    state.mouseOffsetX = event.pageX - getDOMNodePosition(state.draggingItem).left
-    state.mouseOffsetY = event.pageY - getDOMNodePosition(state.draggingItem).top
+    state.mouseOffsetX = mouseEventOrTouch.pageX - getDOMNodePosition(state.draggingItem).left
+    state.mouseOffsetY = mouseEventOrTouch.pageY - getDOMNodePosition(state.draggingItem).top
 
     state.draggingItem.classList.add('draggable')
+
+    state.draggingItem.style.top = `${mouseEventOrTouch.pageY - state.mouseOffsetY}px`
+    state.draggingItem.style.left = `${mouseEventOrTouch.pageX - state.mouseOffsetX}px`
 
     const dividerAbove = <HTMLElement>state.draggingItem.previousElementSibling
 
@@ -47,4 +43,4 @@ function createStartDraggingHandler(state: IAppState) {
   return startDraggingHandler
 }
 
-export { IStartDraggingHandler, createStartDraggingHandler }
+export { createStartDraggingHandler }
