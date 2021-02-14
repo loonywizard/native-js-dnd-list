@@ -7,7 +7,6 @@ interface IAppState {
   isMouseDown: boolean,
   isDragging: boolean,
   draggingHasStarted: boolean,
-  hasLastAnimationCompleted: boolean,
   
   /*
    * When starting element dragging remember X and Y offset:

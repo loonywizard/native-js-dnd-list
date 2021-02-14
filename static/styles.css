@@ -57,11 +57,6 @@ body {
   cursor: move;
 }
 
-.animated-draggable-item {
-  transition: all 0.2s ease;
-  transition-property: left, top;
-}
-
 .not-animated {
   transition: none;
 }

@@ -9,8 +9,6 @@ import { IAppState } from './types'
 
 function createStartDraggingHandler(state: IAppState, listItem: HTMLElement) {
   function startDraggingHandler(event: MouseEvent | TouchEvent) {
-    if (!state.hasLastAnimationCompleted) return
-
     const mouseEventOrTouch: MouseEvent | Touch = (
       event instanceof TouchEvent ? event.touches[0] : event
     )
