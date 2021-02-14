@@ -49,7 +49,7 @@ body {
 
 .draggable {
   position: absolute;
-  background: #DFF1F2;
+  background: #d0d9fd;
   cursor: move;
 }
 
