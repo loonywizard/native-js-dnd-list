@@ -5,8 +5,8 @@ import { IDOMNodePosition } from '../types'
  */
 function getDOMNodePosition(node: HTMLElement): IDOMNodePosition {
   const { top, left } = node.getBoundingClientRect()
-  
-  return { top, left }
+
+  return { top: top + document.documentElement.scrollTop, left }
 }
 
 export { getDOMNodePosition }
