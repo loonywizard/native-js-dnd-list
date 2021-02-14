@@ -1,3 +1,5 @@
+import '../assets/styles.css'
+
 import { createStartDraggingHandler } from './startDraggingHandler'
 import { createStopDraggingHandler } from './stopDraggingHandler'
 import { createDraggingHandler } from './draggingHandler'
@@ -6,7 +8,6 @@ import { createMouseDownHandler } from './onMouseDown'
 import { INITIAL_APP_STATE } from './consts'
 
 import { IAppState } from './types'
-
 
 function init() {
   const state: IAppState = INITIAL_APP_STATE
