@@ -11,7 +11,7 @@ body {
 
 .container {
   min-height: 100vh;
-  background-color: #00A896;
+  background-color: #e2f7ff;
   padding-top: 100px;
   padding-bottom: 30px;
 }
@@ -20,16 +20,16 @@ body {
   margin-left: auto;
   margin-right: auto;
   width: 300px;
-  background: #028090;
-  padding: 10px;
+  background: #5271bc69;
+  padding: 0 10px;
   border-radius: 5px;
   font-size: 1.2rem;
 }
 
 .item {
   width: 280px;
-  background: #F1FAEE;
-  border: 1px solid #05668D;
+  background: #ffffff;
+  border: 1px solid #2b2b44;
   border-radius: 2px;
   padding: 5px 10px;
   user-select: none;
@@ -63,10 +63,10 @@ body {
 }
 
 a {
-  color: #06AED5;
+  color: #ff22bb;
   text-decoration: none;
 }
 
 a:visited {
-  color: #086788;
+  color: #ca16dd;
 }
