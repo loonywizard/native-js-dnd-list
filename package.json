@@ -11,8 +11,8 @@
   "author": "Vladimir Nikitin vladimirsuperwizard@gmail.com",
   "homepage": "https://github.com/loonywizard/native-js-dnd-list",
   "scripts": {
-    "dev": "webpack serve --config webpack.config.dev.js",
-    "build": "webpack --config webpack.config.prod.js",
+    "dev": "NODE_ENV=development webpack serve --config webpack.config.js",
+    "build": "NODE_ENV=production webpack --config webpack.config.js",
     "lint": "eslint src --ext .ts"
   },
   "devDependencies": {

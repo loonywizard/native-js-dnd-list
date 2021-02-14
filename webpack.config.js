@@ -1,16 +1,17 @@
 /* eslint-env node */
-/* eslint @typescript-eslint/no-var-requires: "off" */
 
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
-module.exports = {
-  mode: 'development',
+const isProd = process.env.NODE_ENV === 'production'
+
+const config = {
+  mode: isProd ? 'production' : 'development',
   entry: './src/index.ts',
   output: {
-    filename: 'index.js',
+    filename: '[name][contenthash].js',
     path: path.resolve(__dirname, 'dist'),
   },
   module: {
@@ -32,9 +33,14 @@ module.exports = {
       patterns: [{ from: 'static' }],
     })
   ],
-  devServer: {
+}
+
+if (!isProd) {
+  config.devServer = {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
-    port: 9000
-  },
+    port: 9000,
+  }
 }
+
+module.exports = config
