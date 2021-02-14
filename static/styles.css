@@ -16,6 +16,12 @@ body {
   padding-bottom: 30px;
 }
 
+@media screen and (max-width: 600px) {
+  .container {
+    padding-top: 10px;
+  }
+}
+
 .list {
   margin-left: auto;
   margin-right: auto;
