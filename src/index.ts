@@ -4,11 +4,15 @@ import { createDraggingHandler } from './draggingHandler'
 
 import { INITIAL_APP_STATE } from './consts'
 
+import { fixContainerHeight } from './utils/fixContainerHeight'
+
 import { IAppState } from './types'
 
 function init() {
   const state: IAppState = INITIAL_APP_STATE
   const listItems = <HTMLElement[]>Array.from(document.getElementsByClassName('item'))
+
+  fixContainerHeight(<HTMLElement>document.getElementById('list'))
 
   const stopDraggingHandler = createStopDraggingHandler(state)
   const draggingHandler = createDraggingHandler(state)
