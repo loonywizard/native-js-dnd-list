@@ -36,6 +36,10 @@ body {
   cursor: pointer;
 }
 
+.item:hover {
+  background: #e4e9ff;
+}
+
 .item-id {
   color: #585858;
   font-size: .9rem;
@@ -47,7 +51,7 @@ body {
   transition: height 0.5s ease;
 }
 
-.draggable {
+.item.draggable {
   position: absolute;
   background: #d0d9fd;
   cursor: move;
